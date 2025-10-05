@@ -189,8 +189,8 @@ export default function FeedbackSection({ placeId }: FeedbackSectionProps) {
             ) : (
                 <div className="login-prompt">
                     <p>
-                        Пожалуйста, <Link href="/pages/login">войдите</Link> или{" "}
-                        <Link href="/pages/signup">зарегистрируйтесь</Link>, чтобы оставить
+                        Пожалуйста, <Link href="/login">войдите</Link> или{" "}
+                        <Link href="/signup">зарегистрируйтесь</Link>, чтобы оставить
                         отзыв.
                     </p>
                 </div>

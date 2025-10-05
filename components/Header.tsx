@@ -87,7 +87,7 @@ export default function Header() {
     <header className="site-header">
       <div className="inner">
         {/* Логотип/название — ссылка на главную */}
-        <Link href="/pages/home" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link href="/home" style={{ textDecoration: "none", color: "inherit" }}>
           <strong>{t("appName")}</strong>
         </Link>
         
@@ -106,18 +106,18 @@ export default function Header() {
         
         {/* Навигация для десктопа */}
         <nav className="desktop-nav">
-          <Link href="/pages/tours" className={pathname === "/pages/tours" ? "active" : ""}>{t("tours") || "Tours"}</Link>
-          <Link href="/pages/map" className={pathname === "/pages/map" ? "active" : ""}>{t("map") || "Карта"}</Link>
+          <Link href="/tours" className={pathname === "/tours" ? "active" : ""}>{t("tours") || "Tours"}</Link>
+          <Link href="/map" className={pathname === "/map" ? "active" : ""}>{t("map") || "Карта"}</Link>
           {user ? (
-            <Link href="/pages/profile" className={pathname === "/pages/profile" ? "active" : ""}>{t("profile")}</Link>
+            <Link href="/profile" className={pathname === "/profile" ? "active" : ""}>{t("profile")}</Link>
           ) : (
             <>
-              <Link href="/pages/login" className={pathname === "/pages/login" ? "active" : ""}>{t("login")}</Link>
-              <Link href="/pages/signup" className={pathname === "/pages/signup" ? "active" : ""}>{t("signup")}</Link>
+              <Link href="/login" className={pathname === "/login" ? "active" : ""}>{t("login")}</Link>
+              <Link href="/signup" className={pathname === "/signup" ? "active" : ""}>{t("signup")}</Link>
             </>
           )}
-          <Link href="/pages/settings" className={pathname === "/pages/settings" ? "active" : ""}>{t("settings")}</Link>
-          <Link href="/pages/chat" className={pathname === "/pages/chat" ? "active" : ""}>{t("aiAssistant")}</Link>
+          <Link href="/settings" className={pathname === "/settings" ? "active" : ""}>{t("settings")}</Link>
+          <Link href="/chat" className={pathname === "/chat" ? "active" : ""}>{t("aiAssistant")}</Link>
         </nav>
         
         {/* Мобильное меню */}
@@ -126,19 +126,19 @@ export default function Header() {
             className="mobile-nav"
             onClick={handleMenuClick}
           >
-            <Link href="/pages/home" onClick={() => setMobileMenuOpen(false)}>{t("home")}</Link>
-            <Link href="/pages/tours" onClick={() => setMobileMenuOpen(false)}>{t("tours") || "Tours"}</Link>
-            <Link href="/pages/map" onClick={() => setMobileMenuOpen(false)}>{t("map") || "Карта"}</Link>
+            <Link href="/home" onClick={() => setMobileMenuOpen(false)}>{t("home")}</Link>
+            <Link href="/tours" onClick={() => setMobileMenuOpen(false)}>{t("tours") || "Tours"}</Link>
+            <Link href="/map" onClick={() => setMobileMenuOpen(false)}>{t("map") || "Карта"}</Link>
             {user ? (
-              <Link href="/pages/profile" onClick={() => setMobileMenuOpen(false)}>{t("profile")}</Link>
+              <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>{t("profile")}</Link>
             ) : (
               <>
-                <Link href="/pages/login" onClick={() => setMobileMenuOpen(false)}>{t("login")}</Link>
-                <Link href="/pages/signup" onClick={() => setMobileMenuOpen(false)}>{t("signup")}</Link>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>{t("login")}</Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>{t("signup")}</Link>
               </>
             )}
-            <Link href="/pages/settings" onClick={() => setMobileMenuOpen(false)}>{t("settings")}</Link>
-            <Link href="/pages/chat" onClick={() => setMobileMenuOpen(false)}>{t("aiAssistant")}</Link>
+            <Link href="/settings" onClick={() => setMobileMenuOpen(false)}>{t("settings")}</Link>
+            <Link href="/chat" onClick={() => setMobileMenuOpen(false)}>{t("aiAssistant")}</Link>
           </nav>
         )}
       </div>

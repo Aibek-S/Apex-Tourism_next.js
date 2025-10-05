@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useLanguage } from "../../../contexts/LanguageContext";
 import { motion } from "framer-motion";
-import AnimatedButton from "../../../../components/AnimatedButton";
+import AnimatedButton from "../../../components/AnimatedButton";
 
 export default function SettingsPage() {
     const { language, changeLanguage, t } = useLanguage();

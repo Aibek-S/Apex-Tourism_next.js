@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useSearchParams } from 'next/navigation';
 import L from 'leaflet';
-import { useMapPlaces, getImageUrl } from "../../../../hooks/useSupabase";
-import { useLanguage } from "../../../../contexts/LanguageContext";
-import ImageLoader from "../../../../components/ImageLoader";
+import { useMapPlaces, getImageUrl } from "../../../hooks/useSupabase";
+import { useLanguage } from "../../../contexts/LanguageContext";
+import ImageLoader from "../../../components/ImageLoader";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { LatLngExpression, LatLngBoundsExpression } from 'leaflet';
@@ -117,7 +117,7 @@ export default function MapPage() {
         <p style={{ color: '#c49a6c', fontSize: '18px' }}>
           {t('error')}: {error.toString()}
         </p>
-        <Link href="/pages/home" className="btn">
+        <Link href="/home" className="btn">
           {t('back') || 'На главную'}
         </Link>
       </div>
@@ -239,7 +239,7 @@ export default function MapPage() {
 
                   {/* Кнопка "Подробнее" */}
                   <Link
-                    href={`/pages/places/${place.id}`}
+                    href={`/places/${place.id}`}
                     className="btn scale-hover"
                     style={{
                       display: 'inline-block',
@@ -298,7 +298,7 @@ export default function MapPage() {
         }}
       >
         <Link
-          href="/pages/map"
+          href="/map"
           className="btn scale-hover"
           style={{
             display: 'inline-block',

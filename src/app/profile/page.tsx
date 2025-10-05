@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AnimatedButton from "../../../../components/AnimatedButton";
+import AnimatedButton from "../../../components/AnimatedButton";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../../../contexts/AuthContext";
-import { supabase } from "../../../../lib/supabase";
-import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useAuth } from "../../../contexts/AuthContext";
+import { supabase } from "../../../lib/supabase";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function ProfilePage() {
     const [loading, setLoading] = useState(false);
@@ -53,7 +53,7 @@ export default function ProfilePage() {
         setLoading(true);
         try {
             await signOut();
-            router.push("/pages/login");
+            router.push("/login");
         } catch (error: any) {
             console.error("Error signing out:", error);
         } finally {

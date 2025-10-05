@@ -1,9 +1,9 @@
 "use client";
 
-import { useLanguage } from "../../../../contexts/LanguageContext";
-import SearchSection from "../../../../components/SearchSection";
-import PlaceSlider from "../../../../components/PlaceSlider";
-import CategoryList from "../../../../components/CategoryList";
+import { useLanguage } from "../../../contexts/LanguageContext";
+import SearchSection from "../../../components/SearchSection";
+import PlaceSlider from "../../../components/PlaceSlider";
+import CategoryList from "../../../components/CategoryList";
 import { motion } from "framer-motion";
 
 export default function HomePage() {

@@ -1,9 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { usePlaces, useCategories } from "../../../../../hooks/useSupabase";
-import { useLanguage } from "../../../../../contexts/LanguageContext";
-import PlaceCard from "../../../../../components/PlaceCard";
+import { usePlaces, useCategories } from "../../../../hooks/useSupabase";
+import { useLanguage } from "../../../../contexts/LanguageContext";
+import PlaceCard from "../../../../components/PlaceCard";
 import Link from "next/link";
 
 export default function PlaceList() {
@@ -64,7 +64,7 @@ export default function PlaceList() {
       <div style={{ marginBottom: 24 }}>
         <Link
           className="btn"
-          href="/pages/home"
+          href="/home"
           style={{ marginBottom: 16, display: "inline-block" }}
         >
           ← {t("back")}

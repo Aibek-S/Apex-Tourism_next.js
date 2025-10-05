@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { usePlace, useToursByPlace, getImageUrl } from "../../../../../hooks/useSupabase";
-import { useLanguage } from "../../../../../contexts/LanguageContext";
+import { usePlace, useToursByPlace, getImageUrl } from "../../../../hooks/useSupabase";
+import { useLanguage } from "../../../../contexts/LanguageContext";
 import Link from "next/link";
-import TourCard from "../../../../../components/TourCard";
-import FeedbackSection from "../../../../../components/FeedbackSection";
+import TourCard from "../../../../components/TourCard";
+import FeedbackSection from "../../../../components/FeedbackSection";
 
 export default function PlaceDetail() {
   const params = useParams();
@@ -72,7 +72,7 @@ export default function PlaceDetail() {
           <p className="muted" style={{ color: "var(--primary)" }}>
             {t("error")}: {error}
           </p>
-          <Link className="btn" href="/pages/home">
+          <Link className="btn" href="/home">
             {t("back")}
           </Link>
         </div>
@@ -95,7 +95,7 @@ export default function PlaceDetail() {
           }}
         >
           <p className="muted">{t("noData")}</p>
-          <Link className="btn" href="/pages/home">
+          <Link className="btn" href="/home">
             {t("back")}
           </Link>
         </div>
@@ -131,7 +131,7 @@ export default function PlaceDetail() {
       <div style={{ marginBottom: 24 }}>
         <Link
           className="btn"
-          href={place.categories ? `/pages/categories/${place.categories.id}` : "/pages/home"}
+          href={place.categories ? `/categories/${place.categories.id}` : "/home"}
           style={{ marginBottom: 16, display: "inline-block" }}
         >
           ← {t("back")}
@@ -247,7 +247,7 @@ export default function PlaceDetail() {
           {place.lat && place.lng && (
             <div style={{ marginTop: 16 }}>
               <Link
-                href={`/pages/map?place=${place.id}`}
+                href={`/map?place=${place.id}`}
                 className="btn scale-hover"
                 style={{
                   display: "inline-flex",

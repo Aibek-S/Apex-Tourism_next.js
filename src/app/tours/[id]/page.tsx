@@ -1,10 +1,10 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useTour } from "../../../../../hooks/useSupabase";
-import { useLanguage } from "../../../../../contexts/LanguageContext";
+import { useTour } from "../../../../hooks/useSupabase";
+import { useLanguage } from "../../../../contexts/LanguageContext";
 import Link from "next/link";
-import PlaceCard from "../../../../../components/PlaceCard";
+import PlaceCard from "../../../../components/PlaceCard";
 
 export default function TourDetailPage() {
   const params = useParams();
@@ -41,7 +41,7 @@ export default function TourDetailPage() {
           <p className="muted" style={{ color: 'var(--primary)' }}>
             {t("error")}: {error}
           </p>
-          <Link className="btn" href="/pages/tours">
+          <Link className="btn" href="/tours">
             {t("backToTours")}
           </Link>
         </div>
@@ -61,7 +61,7 @@ export default function TourDetailPage() {
           gap: 16
         }}>
           <p className="muted">{t("noData")}</p>
-          <Link className="btn" href="/pages/tours">
+          <Link className="btn" href="/tours">
             {t("backToTours")}
           </Link>
         </div>
@@ -102,7 +102,7 @@ export default function TourDetailPage() {
   return (
     <div className="app-main">
       <div style={{ marginBottom: 24 }}>
-        <Link href="/pages/tours" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
+        <Link href="/tours" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
           ← {t("backToTours")}
         </Link>
       </div>
@@ -251,7 +251,7 @@ export default function TourDetailPage() {
                 )}
               </div>
               <Link
-                href={`/pages/company/${encodeURIComponent(tour.company)}?fromTour=${tour.id}`}
+                href={`/company/${encodeURIComponent(tour.company)}?fromTour=${tour.id}`}
                 className="btn scale-hover"
                 style={{
                   padding: '8px 16px',

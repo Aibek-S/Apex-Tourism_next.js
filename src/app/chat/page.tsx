@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ChatBot from "../../../../components/ChatBot";
-import { useLanguage } from "../../../../contexts/LanguageContext";
+import ChatBot from "../../../components/ChatBot";
+import { useLanguage } from "../../../contexts/LanguageContext";
 import Link from "next/link";
 
 export default function ChatPage() {
@@ -16,7 +16,7 @@ export default function ChatPage() {
   return (
     <div className="app-main">
       <div style={{ marginBottom: 24 }}>
-        <Link href="/pages/home" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
+        <Link href="/home" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
           ← {t("back")}
         </Link>
         <h1>{t("aiAssistant")}</h1>

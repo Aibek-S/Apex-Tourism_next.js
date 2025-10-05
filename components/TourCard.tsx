@@ -172,7 +172,7 @@ export default function TourCard({ tour }: { tour: any }) {
         )}
         
         <Link 
-          href={`/pages/tours/${tour.id}`} 
+          href={`/tours/${tour.id}`} 
           className="btn scale-hover"
           style={{ 
             width: '100%', 

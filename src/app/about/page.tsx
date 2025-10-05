@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useLanguage } from "../../../contexts/LanguageContext";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ export default function AboutPage() {
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
       <div style={{ marginBottom: 24 }}>
-        <Link href="/pages/home" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
+        <Link href="/home" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
           ← {t("back")}
         </Link>
         <h1>{t("about") || "About Us"}</h1>

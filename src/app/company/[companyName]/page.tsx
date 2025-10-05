@@ -1,10 +1,10 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { useLanguage } from "../../../../../contexts/LanguageContext";
-import { useCompany } from "../../../../../hooks/useSupabase";
+import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useCompany } from "../../../../hooks/useSupabase";
 import Link from "next/link";
-import ImageLoader from "../../../../../components/ImageLoader";
+import ImageLoader from "../../../../components/ImageLoader";
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -45,7 +45,7 @@ export default function CompanyDetailPage() {
           <p className="muted" style={{ color: 'var(--primary)' }}>
             {t("error")}: {error.toString()}
           </p>
-          <Link className="btn" href={fromTour ? `/pages/tours/${fromTour}` : "/pages/tours"}>
+          <Link className="btn" href={fromTour ? `/tours/${fromTour}` : "/tours"}>
             {t("back")}
           </Link>
         </div>
@@ -65,7 +65,7 @@ export default function CompanyDetailPage() {
           gap: 16
         }}>
           <p className="muted">{t("noData")}</p>
-          <Link className="btn" href={fromTour ? `/pages/tours/${fromTour}` : "/pages/tours"}>
+          <Link className="btn" href={fromTour ? `/tours/${fromTour}` : "/tours"}>
             {t("back")}
           </Link>
         </div>
@@ -83,7 +83,7 @@ export default function CompanyDetailPage() {
   return (
     <div className="app-main">
       <div style={{ marginBottom: 24 }}>
-        <Link href={fromTour ? `/pages/tours/${fromTour}` : "/pages/tours"} className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
+        <Link href={fromTour ? `/tours/${fromTour}` : "/tours"} className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
           ← {t("back")}
         </Link>
       </div>

@@ -2,19 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../../../contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import { motion } from "framer-motion";
-import AnimatedButton from "../../../../components/AnimatedButton";
-import { useLanguage } from "../../../../contexts/LanguageContext";
+import AnimatedButton from "../../../components/AnimatedButton";
+import { useLanguage } from "../../../contexts/LanguageContext";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState(""); // New state for success messages
+    const [fullName, setFullName] = useState("");
     const [loading, setLoading] = useState(false);
-    const { signIn } = useAuth(); // Removed signInWithGoogle from destructuring
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+    const { signUp } = useAuth();
     const router = useRouter();
     const { t } = useLanguage();
 
@@ -22,25 +23,37 @@ export default function LoginPage() {
         e.preventDefault();
         setLoading(true);
         setError("");
-        setMessage(""); // Clear any previous message
+        setMessage("");
+
+        if (!email || !password || !fullName) {
+            setError(t("fillAllFields"));
+            setLoading(false);
+            return;
+        }
+
+        if (password.length < 6) {
+            setError(t("passwordMinLength"));
+            setLoading(false);
+            return;
+        }
 
         try {
-            const { error } = await signIn(email, password);
+            const { data, error } = await signUp(email, password, {
+                data: { full_name: fullName },
+            });
+
             if (error) throw error;
-            router.push("/pages/home");
-        } catch (err: any) {
-            // Check if it's an email confirmation error
-            if (err.message.includes("Email not confirmed")) {
-                setMessage(t("checkEmail"));
-            } else {
-                setError(err.message);
-            }
+
+            setMessage(t("signupSuccess"));
+            setEmail("");
+            setPassword("");
+            setFullName("");
+        } catch (error: any) {
+            setError(error.message);
         } finally {
             setLoading(false);
         }
     };
-
-    // Removed handleGoogleSignIn function
 
     return (
         <div className="app-main">
@@ -60,11 +73,23 @@ export default function LoginPage() {
                         ease: [0.4, 0, 0.2, 1],
                     }}
                 >
-                    <h2>{t("login")}</h2>
+                    <h2>{t("signup")}</h2>
+
                     {error && <div className="error-message">{error}</div>}
                     {message && <div className="success-message">{message}</div>}
 
                     <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="fullName">{t("fullName")}</label>
+                            <input
+                                id="fullName"
+                                type="text"
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                placeholder={t("enterFullName")}
+                            />
+                        </div>
+
                         <div className="form-group">
                             <label htmlFor="email">{t("email")}</label>
                             <input
@@ -73,7 +98,6 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder={t("enterEmail")}
-                                required
                             />
                         </div>
 
@@ -85,27 +109,24 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder={t("enterPassword")}
-                                required
                             />
                         </div>
 
                         <AnimatedButton
                             type="submit"
                             disabled={loading}
+                            className="btn"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                         >
-                            {loading ? `${t("signIn")}...` : t("signIn")}
+                            {loading ? `${t("signUp")}...` : t("signUp")}
                         </AnimatedButton>
                     </form>
 
-                    {/* Removed Google login button and divider */}
-
                     <div className="auth-links">
                         <p>
-                            {t("noAccount")}{" "}
-                            <Link href="/pages/signup">{t("register")}</Link>
+                            {t("haveAccount")} <Link href="/login">{t("loginAction")}</Link>
                         </p>
                     </div>
                 </motion.div>

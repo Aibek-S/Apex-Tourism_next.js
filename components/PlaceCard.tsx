@@ -40,7 +40,7 @@ export default function PlaceCard({ place }: { place: any }) {
         <p className="muted" style={{ minHeight: 42, marginBottom: 16 }}>
           {getLocalizedField(place, "description").slice(0, 100)}....
         </p>
-        <Link className="btn scale-hover" href={`/pages/places/${place.id}`}>
+        <Link className="btn scale-hover" href={`/places/${place.id}`}>
           {t("details")}
         </Link>
       </div>

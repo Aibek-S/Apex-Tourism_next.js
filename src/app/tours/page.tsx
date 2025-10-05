@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { useTours } from "../../../../hooks/useSupabase";
-import { useLanguage } from "../../../../contexts/LanguageContext";
-import TourCard from "../../../../components/TourCard";
+import { useTours } from "../../../hooks/useSupabase";
+import { useLanguage } from "../../../contexts/LanguageContext";
+import TourCard from "../../../components/TourCard";
 import { motion } from "framer-motion";
 
 export default function TourListPage() {
@@ -60,7 +60,7 @@ export default function TourListPage() {
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       >
         <div style={{ marginBottom: 24 }}>
-          <Link href="/pages/home" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
+          <Link href="/home" className="btn" style={{ marginBottom: 16, display: 'inline-block' }}>
             ← {t("back")}
           </Link>
         </div>

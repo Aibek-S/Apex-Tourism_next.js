@@ -184,7 +184,7 @@ export default function PlaceSlider() {
                             </div>
                             <Link
                                 className="icon-btn"
-                                href={`/pages/places/${currentPlace.id}`}
+                                href={`/places/${currentPlace.id}`}
                                 style={{
                                     background: "var(--card)",
                                     flexShrink: 0,

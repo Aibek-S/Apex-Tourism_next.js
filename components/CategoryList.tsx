@@ -89,7 +89,7 @@ export default function CategoryList() {
           >
             <div className="content">
               <h3 style={{ marginBottom: 16 }}>{getLocalizedField(category, "name")}</h3>
-              <Link className="btn scale-hover" href={`/pages/categories/${category.id}`} >
+              <Link className="btn scale-hover" href={`/categories/${category.id}`} >
                 {t("Move")}
               </Link>
             </div>
