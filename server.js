@@ -3,8 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from .env.local
+// Load environment variables (try multiple possible locations)
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+dotenv.config(); // Also try default .env
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,19 +14,19 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Validate API key
-if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
-  console.error('❌ NEXT_PUBLIC_GEMINI_API_KEY environment variable is not set');
-  console.error('Please make sure you have a .env.local file with your Gemini API key');
-  console.error('Example .env.local file:');
-  console.error('NEXT_PUBLIC_GEMINI_API_KEY=your_actual_gemini_api_key_here');
-  console.error('PORT=3001');
-  process.exit(1);
-}
-
 // Gemini API endpoint
 app.post('/api/chat', async (req, res) => {
   try {
+    // Check if API key is available
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      return res.status(500).json({ 
+        error: 'API key not configured',
+        message: 'Gemini API key is missing. Please configure environment variables.'
+      });
+    }
+
     const { message } = req.body;
     
     if (!message) {
@@ -34,7 +35,7 @@ app.post('/api/chat', async (req, res) => {
 
     // Call Gemini API with gemini-2.5-flash model
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
@@ -63,19 +64,33 @@ app.post('/api/chat', async (req, res) => {
     res.json({ reply });
   } catch (error) {
     console.error('Error calling Gemini API:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message
+    });
   }
 });
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  const hasApiKey = !!(process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY);
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    hasApiKey
+  });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🤖 Gemini API Proxy Server running on port ${PORT}`);
-  console.log(`📝 POST endpoint: http://localhost:${PORT}/api/chat`);
-  console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔑 Using API key: ${process.env.NEXT_PUBLIC_GEMINI_API_KEY ? 'YES' : 'NO'}`);
-});
+// Export the app for Vercel
+export default app;
+
+// Only start server if not running on Vercel
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🤖 Gemini API Proxy Server running on port ${PORT}`);
+    console.log(`📝 POST endpoint: http://localhost:${PORT}/api/chat`);
+    console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    console.log(`🔑 Using API key: ${apiKey ? 'YES' : 'NO'}`);
+  });
+}

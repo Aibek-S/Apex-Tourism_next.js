@@ -2,7 +2,7 @@ import geminiApiQueue from './apiQueue';
 
 // Utility functions for interacting with the Gemini API proxy server
 
-const SERVER_URL = process.env.NEXT_PUBLIC_GEMINI_SERVER_URL || 'http://localhost:3001';
+const SERVER_URL = process.env.NEXT_PUBLIC_GEMINI_SERVER_URL || (process.env.VERCEL ? 'https://apex-tourism-next-js.vercel.app' : 'http://localhost:3001');
 
 // AI assistant context for tourism guide
 const AI_CONTEXT = `Ты — чат-бот-туроводитель для Мангистауской области.
@@ -21,31 +21,54 @@ interface ContextMessage {
 }
 
 /**
+ * Check if the server is healthy
+ * @returns True if server is healthy
+ */
+export async function checkServerHealth(): Promise<boolean> {
+  try {
+    const response = await fetch(`${SERVER_URL}/api/health`);
+    return response.ok;
+  } catch (error) {
+    console.error('Server health check failed:', error);
+    return false;
+  }
+}
+
+/**
  * Send a message to the Gemini API through our proxy server
  * @param message - The message to send to Gemini
  * @returns The response from Gemini
  */
 export async function sendGeminiMessage(message: string): Promise<string> {
-  // Create a request function that will be queued
-  const requestFn = () => {
-    return fetch(`${SERVER_URL}/api/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message }),
-    }).then(response => {
-      if (!response.ok) {
-        return response.json().then(errorData => {
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-        });
-      }
-      return response.json();
-    }).then(data => data.reply);
-  };
+  try {
+    // Create a request function that will be queued
+    const requestFn = () => {
+      return fetch(`${SERVER_URL}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      }).then(response => {
+        if (!response.ok) {
+          return response.json().then(errorData => {
+            throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
+          });
+        }
+        return response.json();
+      }).then(data => data.reply);
+    };
 
-  // Add the request to the queue and return the promise
-  return geminiApiQueue.add(requestFn);
+    // Add the request to the queue and return the promise
+    return geminiApiQueue.add(requestFn);
+  } catch (error: unknown) {
+    console.error('Error in sendGeminiMessage:', error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to send message to AI assistant: ${error.message}`);
+    } else {
+      throw new Error(`Failed to send message to AI assistant: Unknown error occurred`);
+    }
+  }
 }
 
 /**
@@ -54,28 +77,37 @@ export async function sendGeminiMessage(message: string): Promise<string> {
  * @returns The response from Gemini
  */
 export async function sendGeminiMessageWithContext(contextMessages: ContextMessage[]): Promise<string> {
-  // Create a request function that will be queued
-  const requestFn = () => {
-    return fetch(`${SERVER_URL}/api/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        message: formatContextForPrompt(contextMessages)
-      }),
-    }).then(response => {
-      if (!response.ok) {
-        return response.json().then(errorData => {
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-        });
-      }
-      return response.json();
-    }).then(data => data.reply);
-  };
+  try {
+    // Create a request function that will be queued
+    const requestFn = () => {
+      return fetch(`${SERVER_URL}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          message: formatContextForPrompt(contextMessages)
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          return response.json().then(errorData => {
+            throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
+          });
+        }
+        return response.json();
+      }).then(data => data.reply);
+    };
 
-  // Add the request to the queue and return the promise
-  return geminiApiQueue.add(requestFn);
+    // Add the request to the queue and return the promise
+    return geminiApiQueue.add(requestFn);
+  } catch (error: unknown) {
+    console.error('Error in sendGeminiMessageWithContext:', error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to send message to AI assistant: ${error.message}`);
+    } else {
+      throw new Error(`Failed to send message to AI assistant: Unknown error occurred`);
+    }
+  }
 }
 
 /**
@@ -98,18 +130,4 @@ function formatContextForPrompt(contextMessages: ContextMessage[]): string {
 
   // Add AI context and prompt for continuation
   return `${AI_CONTEXT}\n\n${formattedContext}\nТуроводитель:`;
-}
-
-/**
- * Check if the server is healthy
- * @returns True if server is healthy
- */
-export async function checkServerHealth(): Promise<boolean> {
-  try {
-    const response = await fetch(`${SERVER_URL}/api/health`);
-    return response.ok;
-  } catch (error) {
-    console.error('Server health check failed:', error);
-    return false;
-  }
 }
