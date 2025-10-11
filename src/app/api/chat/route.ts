@@ -12,11 +12,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Validate API key
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Validate API key (check multiple possible environment variables)
+    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) {
       console.error('❌ GEMINI_API_KEY environment variable is not set');
-      return new Response(JSON.stringify({ error: 'Server configuration error' }), {
+      return new Response(JSON.stringify({ 
+        error: 'Server configuration error',
+        message: 'API key not configured. Please set GEMINI_API_KEY or NEXT_PUBLIC_GEMINI_API_KEY environment variable.'
+      }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -54,9 +57,17 @@ export async function POST(request: NextRequest) {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error calling Gemini API:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    let errorMessage = 'Unknown error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    return new Response(JSON.stringify({ 
+      error: 'Internal server error',
+      message: errorMessage
+    }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

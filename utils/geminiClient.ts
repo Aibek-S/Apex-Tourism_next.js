@@ -2,7 +2,7 @@ import geminiApiQueue from './apiQueue';
 
 // Utility functions for interacting with the Gemini API proxy server
 
-const SERVER_URL = process.env.NEXT_PUBLIC_GEMINI_SERVER_URL || (process.env.VERCEL ? 'https://apex-tourism-next-js.vercel.app' : 'http://localhost:3001');
+const SERVER_URL = process.env.NEXT_PUBLIC_GEMINI_SERVER_URL || (process.env.VERCEL ? '' : 'http://localhost:3001');
 
 // AI assistant context for tourism guide
 const AI_CONTEXT = `Ты — чат-бот-туроводитель для Мангистауской области.
@@ -21,29 +21,39 @@ interface ContextMessage {
 }
 
 /**
- * Check if the server is healthy
- * @returns True if server is healthy
- */
-export async function checkServerHealth(): Promise<boolean> {
-  try {
-    const response = await fetch(`${SERVER_URL}/api/health`);
-    return response.ok;
-  } catch (error) {
-    console.error('Server health check failed:', error);
-    return false;
-  }
-}
-
-/**
- * Send a message to the Gemini API through our proxy server
+ * Send a message to the Gemini API through our Next.js API route
  * @param message - The message to send to Gemini
  * @returns The response from Gemini
  */
 export async function sendGeminiMessage(message: string): Promise<string> {
   try {
-    // Create a request function that will be queued
+    // If we have a server URL, use it (for local development with custom server)
+    if (SERVER_URL) {
+      // Create a request function that will be queued
+      const requestFn = () => {
+        return fetch(`${SERVER_URL}/api/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message }),
+        }).then(response => {
+          if (!response.ok) {
+            return response.json().then(errorData => {
+              throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
+            });
+          }
+          return response.json();
+        }).then(data => data.reply);
+      };
+
+      // Add the request to the queue and return the promise
+      return geminiApiQueue.add(requestFn);
+    }
+
+    // Otherwise, use the Next.js API route (for Vercel deployment)
     const requestFn = () => {
-      return fetch(`${SERVER_URL}/api/chat`, {
+      return fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,15 +88,46 @@ export async function sendGeminiMessage(message: string): Promise<string> {
  */
 export async function sendGeminiMessageWithContext(contextMessages: ContextMessage[]): Promise<string> {
   try {
-    // Create a request function that will be queued
+    // Format the context messages into a single message for the API
+    const formattedContext = contextMessages.map(msg => 
+      `${msg.sender === 'user' ? 'Пользователь' : 'Туроводитель'}: ${msg.text}`
+    ).join('\n');
+
+    // If we have a server URL, use it (for local development with custom server)
+    if (SERVER_URL) {
+      // Create a request function that will be queued
+      const requestFn = () => {
+        return fetch(`${SERVER_URL}/api/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            message: formattedContext
+          }),
+        }).then(response => {
+          if (!response.ok) {
+            return response.json().then(errorData => {
+              throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
+            });
+          }
+          return response.json();
+        }).then(data => data.reply);
+      };
+
+      // Add the request to the queue and return the promise
+      return geminiApiQueue.add(requestFn);
+    }
+
+    // Otherwise, use the Next.js API route (for Vercel deployment)
     const requestFn = () => {
-      return fetch(`${SERVER_URL}/api/chat`, {
+      return fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          message: formatContextForPrompt(contextMessages)
+          message: formattedContext
         }),
       }).then(response => {
         if (!response.ok) {
@@ -111,23 +152,22 @@ export async function sendGeminiMessageWithContext(contextMessages: ContextMessa
 }
 
 /**
- * Format conversation context into a single prompt string
- * @param contextMessages - Array of message objects with text and sender properties
- * @returns Formatted prompt string
+ * Check if the server is healthy
+ * @returns True if server is healthy
  */
-function formatContextForPrompt(contextMessages: ContextMessage[]): string {
-  // If no context, return AI context only
-  if (!contextMessages || contextMessages.length === 0) {
-    return `${AI_CONTEXT}\n\nПользователь: `;
+export async function checkServerHealth(): Promise<boolean> {
+  try {
+    // If we have a server URL, check that server
+    if (SERVER_URL) {
+      const response = await fetch(`${SERVER_URL}/api/health`);
+      return response.ok;
+    }
+    
+    // Otherwise, check the Next.js API route
+    const response = await fetch('/api/health');
+    return response.ok;
+  } catch (error) {
+    console.error('Server health check failed:', error);
+    return false;
   }
-
-  // Format the context messages into a conversation format
-  // Each message is prefixed with the sender role
-  const formattedContext = contextMessages.map(msg => {
-    const role = msg.sender === 'user' ? 'Пользователь' : 'Туроводитель';
-    return `${role}: ${msg.text}`;
-  }).join('\n');
-
-  // Add AI context and prompt for continuation
-  return `${AI_CONTEXT}\n\n${formattedContext}\nТуроводитель:`;
 }
