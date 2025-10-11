@@ -81,16 +81,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Export the app for Vercel
-export default app;
+// Export the app for Vercel serverless functions
+export default (req, res) => {
+  // Handle the request with our express app
+  return app(req, res);
+};
 
-// Only start server if not running on Vercel
+// Only start server if not running on Vercel (for local development)
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`🤖 Gemini API Proxy Server running on port ${PORT}`);
     console.log(`📝 POST endpoint: http://localhost:${PORT}/api/chat`);
     console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     console.log(`🔑 Using API key: ${apiKey ? 'YES' : 'NO'}`);
+  });
+  
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+      console.log('Process terminated');
+    });
   });
 }

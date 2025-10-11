@@ -1,5 +1,17 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "next.config.ts",
+          "package.json"
+        ]
+      }
+    }
+  ],
   "routes": [
     {
       "src": "/api/chat",
